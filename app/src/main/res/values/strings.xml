@@ -4,4 +4,5 @@
     <string name="invoice_list_empty_message">No invoices yet! Add some to get started.</string>
     <string name="invoice_list_error_message">Invoices could not be loaded</string>
     <string name="invoice_list_error_retry_action">Try again</string>
+    <string name="invoice_item_total_label">Total: %1$s</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -49,7 +50,10 @@ fun InvoiceListScreen(
         val modifier = Modifier.padding(innerPadding)
         when (uiState) {
             InvoiceListUiState.Loading -> LoadingContent(modifier)
-            InvoiceListUiState.Loaded -> LoadedContent(modifier)
+            is InvoiceListUiState.Loaded -> LoadedContent(
+                uiState = uiState as InvoiceListUiState.Loaded,
+                modifier = modifier,
+            )
             InvoiceListUiState.Empty -> EmptyContent(modifier)
             InvoiceListUiState.Error -> ErrorContent(
                 modifier = modifier,
@@ -71,17 +75,28 @@ private fun LoadingContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun LoadedContent(modifier: Modifier = Modifier) {
+private fun LoadedContent(
+    uiState: InvoiceListUiState.Loaded,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        items(count = 30) { InvoiceItem() }
+        items(
+            items = uiState.invoices,
+            key = { it.id },
+        ) {
+            InvoiceItem(it)
+        }
     }
 }
 
 @Composable
-private fun InvoiceItem(modifier: Modifier = Modifier) {
+private fun InvoiceItem(
+    item: InvoiceUi,
+    modifier: Modifier = Modifier,
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -91,18 +106,20 @@ private fun InvoiceItem(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "1 Jan 2025",
+                text = item.date,
                 style = MaterialTheme.typography.bodyLarge,
             )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Optional description",
-                style = MaterialTheme.typography.bodySmall,
-            )
+            item.description?.let { description ->
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             Spacer(Modifier.height(8.dp))
             // TODO: display line items
             Text(
-                text = "Total: $123.45",
+                text = stringResource(R.string.invoice_item_total_label, item.total),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -163,7 +180,24 @@ private fun PreviewLoadingContent() {
 @Composable
 private fun PreviewLoadedContent() {
     InvoicesTheme {
-        LoadedContent()
+        LoadedContent(
+            uiState = InvoiceListUiState.Loaded(
+                invoices = listOf(
+                    InvoiceUi(
+                        id = "1",
+                        date = "1 Jan 2025",
+                        description = "Description",
+                        total = "$100.00",
+                    ),
+                    InvoiceUi(
+                        id = "2",
+                        date = "2 Jan 2025",
+                        description = null,
+                        total = "$123.10"
+                    ),
+                )
+            )
+        )
     }
 }
 
