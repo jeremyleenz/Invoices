@@ -19,18 +19,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nz.jeremylee.invoices.R
 import nz.jeremylee.invoices.ui.theme.InvoicesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InvoiceListScreen() {
+fun InvoiceListScreen(
+    viewModel: InvoiceListViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -40,7 +47,26 @@ fun InvoiceListScreen() {
         }
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
-        LoadedContent(modifier = modifier)
+        when (uiState) {
+            InvoiceListUiState.Loading -> LoadingContent(modifier)
+            InvoiceListUiState.Loaded -> LoadedContent(modifier)
+            InvoiceListUiState.Empty -> EmptyContent(modifier)
+            InvoiceListUiState.Error -> ErrorContent(
+                modifier = modifier,
+                onRetryClick = viewModel::onRetryClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun LoadingContent(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center),
+        )
     }
 }
 
@@ -125,14 +151,11 @@ private fun ErrorContent(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-private fun LoadingContent(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.align(Alignment.Center),
-        )
+private fun PreviewLoadingContent() {
+    InvoicesTheme {
+        LoadingContent()
     }
 }
 
@@ -157,13 +180,5 @@ private fun PreviewEmptyContent() {
 private fun PreviewErrorContent() {
     InvoicesTheme {
         ErrorContent()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewLoadingContent() {
-    InvoicesTheme {
-        LoadingContent()
     }
 }
