@@ -1,5 +1,8 @@
 # Invoice App
 
+## Screenshots
+![Invoice list screen](screenshots/invoice_list.png)
+
 ## Architectural approach
 - **MVVM architecture** with a clear separation of concerns
 - **Data layer**: Retrofit + Kotlinx Serialization and a `InvoiceRepository` for fetching data
@@ -33,6 +36,7 @@
 - **Currency**: Assumed all values are AUD
 - **Mapping**: Functions are in the ViewModel/Repository for simplicity
 - **Repository**: No interface in this project. In a production app, I would expose one for fakes in tests (e.g., `InvoiceRepository`, `InvoiceRepositoryImpl`, `FakeInvoiceRepository`)
+- **Pagination**: Not implemented. The endpoint is static and small, so I kept a single fetch for simplicity.
 
 ## Future improvements
 - Add a details screen to display invoice line items more fully
@@ -44,3 +48,4 @@
 - Support multiple currencies
 - Introduce repository interfaces for easier faking in tests
 - Extract mapper classes from ViewModel/Repository for clearer separation and better testability
+- Introduce pagination logic for large datasets
