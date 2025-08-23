@@ -1,19 +1,27 @@
 package nz.jeremylee.invoices.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import nz.jeremylee.invoices.domain.GetInvoicesUseCase
+import nz.jeremylee.invoices.domain.model.Invoice
+import nz.jeremylee.invoices.domain.model.totalInCents
+import java.text.NumberFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class InvoiceListViewModel @Inject constructor() : ViewModel() {
+class InvoiceListViewModel @Inject constructor(
+    private val getInvoicesUseCase: GetInvoicesUseCase,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<InvoiceListUiState>(InvoiceListUiState.Loading)
     val uiState: StateFlow<InvoiceListUiState> = _uiState.asStateFlow()
@@ -29,26 +37,48 @@ class InvoiceListViewModel @Inject constructor() : ViewModel() {
     private fun loadInvoices() {
         _uiState.update { InvoiceListUiState.Loading }
         viewModelScope.launch {
-            delay(1.seconds)
-            _uiState.update {
+            getInvoicesUseCase()
+                .onSuccess(::handleLoadSuccess)
+                .onFailure(::handleLoadFailure)
+        }
+    }
+
+    private fun handleLoadSuccess(invoices: List<Invoice>) {
+        _uiState.update {
+            if (invoices.isEmpty()) {
+                InvoiceListUiState.Empty
+            } else {
                 InvoiceListUiState.Loaded(
-                    invoices = listOf(
-                        InvoiceUi(
-                            id = "1",
-                            date = "1 Jan 2025",
-                            description = "Description",
-                            total = "$100.00",
-                        ),
-                        InvoiceUi(
-                            id = "2",
-                            date = "2 Jan 2025",
-                            description = null,
-                            total = "$123.10"
-                        ),
-                    ),
+                    invoices = invoices.map { it.toUi() },
                 )
             }
         }
+    }
+
+    private fun handleLoadFailure(error: Throwable) {
+        Log.e(TAG, "Error loading invoices", error)
+        _uiState.update { InvoiceListUiState.Error }
+    }
+
+    private fun Invoice.toUi() =
+        InvoiceUi(
+            id = id,
+            date = date.toDisplayString(),
+            description = description,
+            total = totalInCents.centsToDisplayDollars(),
+        )
+
+    private fun Int.centsToDisplayDollars(): String =
+        NumberFormat
+            .getCurrencyInstance(Locale.forLanguageTag("en-AU"))
+            .format(this / 100.0)
+
+    private fun LocalDateTime.toDisplayString(): String =
+        this.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+
+    companion object {
+        private const val TAG = "InvoiceListViewModel"
+        private const val DATE_FORMAT = "d MMM yyyy"
     }
 }
 
