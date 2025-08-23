@@ -1,6 +1,5 @@
 package nz.jeremylee.invoices.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +11,7 @@ import kotlinx.coroutines.launch
 import nz.jeremylee.invoices.domain.GetInvoicesUseCase
 import nz.jeremylee.invoices.domain.model.Invoice
 import nz.jeremylee.invoices.domain.model.totalInCents
+import timber.log.Timber
 import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -30,11 +30,7 @@ class InvoiceListViewModel @Inject constructor(
         loadInvoices()
     }
 
-    fun onRetryClick() {
-        loadInvoices()
-    }
-
-    private fun loadInvoices() {
+    fun loadInvoices() {
         _uiState.update { InvoiceListUiState.Loading }
         viewModelScope.launch {
             getInvoicesUseCase()
@@ -56,7 +52,7 @@ class InvoiceListViewModel @Inject constructor(
     }
 
     private fun handleLoadFailure(error: Throwable) {
-        Log.e(TAG, "Error loading invoices", error)
+        Timber.e(error, "Error loading invoices")
         _uiState.update { InvoiceListUiState.Error }
     }
 
@@ -77,7 +73,6 @@ class InvoiceListViewModel @Inject constructor(
         this.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
 
     companion object {
-        private const val TAG = "InvoiceListViewModel"
         private const val DATE_FORMAT = "d MMM yyyy"
     }
 }

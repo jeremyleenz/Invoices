@@ -57,7 +57,7 @@ fun InvoiceListScreen(
             InvoiceListUiState.Empty -> EmptyContent(modifier)
             InvoiceListUiState.Error -> ErrorContent(
                 modifier = modifier,
-                onRetryClick = viewModel::onRetryClick,
+                onRetryClick = viewModel::loadInvoices,
             )
         }
     }
