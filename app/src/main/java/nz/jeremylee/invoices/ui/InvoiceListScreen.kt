@@ -3,12 +3,15 @@ package nz.jeremylee.invoices.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -24,12 +27,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nz.jeremylee.invoices.R
+import nz.jeremylee.invoices.domain.model.InvoiceLineItem
 import nz.jeremylee.invoices.ui.theme.InvoicesTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,6 +113,7 @@ private fun InvoiceItem(
             Text(
                 text = item.date,
                 style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
             )
             item.description?.let { description ->
                 Spacer(Modifier.height(8.dp))
@@ -117,12 +123,41 @@ private fun InvoiceItem(
                 )
             }
             Spacer(Modifier.height(8.dp))
-            // TODO: display line items
+            item.lineItems.forEach { lineItem ->
+                InvoiceLineItem(lineItem)
+            }
+            Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(R.string.invoice_item_total_label, item.total),
                 style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
             )
         }
+    }
+}
+
+@Composable
+private fun InvoiceLineItem(
+    item: InvoiceLineItemUi,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = item.name,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = stringResource(
+                R.string.invoice_item_line_price_label,
+                item.quantity,
+                item.price
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
@@ -188,12 +223,36 @@ private fun PreviewLoadedContent() {
                         date = "1 Jan 2025",
                         description = "Description",
                         total = "$100.00",
+                        lineItems = listOf(
+                            InvoiceLineItemUi(
+                                name = "Item 1",
+                                quantity = "1",
+                                price = "$100.00",
+                            ),
+                            InvoiceLineItemUi(
+                                name = "Item 2",
+                                quantity = "2",
+                                price = "$200.00",
+                            ),
+                        )
                     ),
                     InvoiceUi(
                         id = "2",
                         date = "2 Jan 2025",
                         description = null,
-                        total = "$123.10"
+                        total = "$123.10",
+                        lineItems = listOf(
+                            InvoiceLineItemUi(
+                                name = "Item 1",
+                                quantity = "1",
+                                price = "$100.00",
+                            ),
+                            InvoiceLineItemUi(
+                                name = "Item 2",
+                                quantity = "2",
+                                price = "$200.00",
+                            ),
+                        )
                     ),
                 )
             )

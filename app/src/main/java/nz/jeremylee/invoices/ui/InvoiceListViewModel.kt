@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import nz.jeremylee.invoices.domain.GetInvoicesUseCase
 import nz.jeremylee.invoices.domain.model.Invoice
+import nz.jeremylee.invoices.domain.model.InvoiceLineItem
 import nz.jeremylee.invoices.domain.model.totalInCents
 import timber.log.Timber
 import java.text.NumberFormat
@@ -62,6 +63,14 @@ class InvoiceListViewModel @Inject constructor(
             date = date.toDisplayString(),
             description = description,
             total = totalInCents.centsToDisplayDollars(),
+            lineItems = items.map { it.toUi() },
+        )
+
+    private fun InvoiceLineItem.toUi() =
+        InvoiceLineItemUi(
+            name = name,
+            quantity = quantity.toString(),
+            price = priceInCents.centsToDisplayDollars(),
         )
 
     private fun Int.centsToDisplayDollars(): String =
@@ -89,4 +98,11 @@ data class InvoiceUi(
     val date: String,
     val description: String?,
     val total: String,
+    val lineItems: List<InvoiceLineItemUi>,
+)
+
+data class InvoiceLineItemUi(
+    val name: String,
+    val quantity: String,
+    val price: String,
 )

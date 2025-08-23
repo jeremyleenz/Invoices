@@ -117,12 +117,36 @@ class InvoiceListViewModelTest {
             date = "1 Jan 2023",
             description = "Invoice 1",
             total = "$7.00",
+            lineItems = listOf(
+                InvoiceLineItemUi(
+                    name = "Item 1",
+                    quantity = "1",
+                    price = "$1.00",
+                ),
+                InvoiceLineItemUi(
+                    name = "Item 2",
+                    quantity = "3",
+                    price = "$2.00",
+                ),
+            )
         ),
         InvoiceUi(
             id = "2",
             date = "15 Mar 2023",
             description = null,
             total = "$17.00",
+            lineItems = listOf(
+                InvoiceLineItemUi(
+                    name = "Item 1",
+                    quantity = "3",
+                    price = "$1.00",
+                ),
+                InvoiceLineItemUi(
+                    name = "Item 2",
+                    quantity = "7",
+                    price = "$2.00",
+                ),
+            )
         )
     )
 }
