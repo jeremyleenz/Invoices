@@ -33,22 +33,28 @@ class GetInvoicesUseCaseTest {
 
     @Test
     fun `when repository success, should return list of invoices`() = runTest {
+        // Given
         val invoices = invoices()
         coEvery { invoiceRepository.getInvoices() } returns Result.success(invoices)
 
+        // When
         val result = getInvoicesUseCase()
 
+        // Then
         assertEquals(Result.success(invoices), result)
         coVerify { invoiceRepository.getInvoices() }
     }
 
     @Test
     fun `when repository failure, should return error`() = runTest {
+        // Given
         val error = Exception()
         coEvery { invoiceRepository.getInvoices() } returns Result.failure(error)
 
+        // When
         val result = getInvoicesUseCase()
 
+        // Then
         assertEquals(Result.failure<List<Invoice>>(error), result)
         coVerify { invoiceRepository.getInvoices() }
     }

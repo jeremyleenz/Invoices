@@ -33,11 +33,14 @@ class InvoiceListViewModelTest {
 
     @Test
     fun `when load invoices success with non-empty list, should show empty state`() = runTest {
+        // Given
         coEvery { getInvoicesUseCase() } returns Result.success(invoices())
 
         viewModel.uiState.test {
+            // When
             viewModel.loadInvoices()
 
+            // Then
             assertEquals(InvoiceListUiState.Loading, awaitItem())
             assertEquals(InvoiceListUiState.Loaded(invoicesUi()), awaitItem())
             expectNoEvents()
@@ -47,11 +50,14 @@ class InvoiceListViewModelTest {
 
     @Test
     fun `when load invoices success with empty list, should show empty state`() = runTest {
+        // Given
         coEvery { getInvoicesUseCase() } returns Result.success(emptyList())
 
         viewModel.uiState.test {
+            // When
             viewModel.loadInvoices()
 
+            // Then
             assertEquals(InvoiceListUiState.Loading, awaitItem())
             assertEquals(InvoiceListUiState.Empty, awaitItem())
             expectNoEvents()
@@ -61,11 +67,14 @@ class InvoiceListViewModelTest {
 
     @Test
     fun `when load invoices with error, should show error state`() = runTest {
+        // Given
         coEvery { getInvoicesUseCase() } returns Result.failure(Exception())
 
         viewModel.uiState.test {
+            // When
             viewModel.loadInvoices()
 
+            // Then
             assertEquals(InvoiceListUiState.Loading, awaitItem())
             assertEquals(InvoiceListUiState.Error, awaitItem())
             expectNoEvents()

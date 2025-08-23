@@ -1,10 +1,10 @@
-package nz.jeremylee.invoices.data
+package nz.jeremylee.invoices.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class InvoiceResponse(
+data class InvoiceResponseDto(
     val items: List<InvoiceDto>,
 )
 
