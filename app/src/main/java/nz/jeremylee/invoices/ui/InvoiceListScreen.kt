@@ -95,7 +95,10 @@ private fun LoadedContent(
             items = uiState.invoices,
             key = { it.id },
         ) {
-            InvoiceItem(it)
+            InvoiceItem(
+                item = it,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -106,7 +109,7 @@ private fun InvoiceItem(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
