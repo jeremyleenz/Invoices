@@ -6,13 +6,13 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
 import io.mockk.unmockkAll
-import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.test.runTest
 import nz.jeremylee.invoices.domain.GetInvoicesUseCase
 import nz.jeremylee.invoices.util.MainDispatcherRule
 import nz.jeremylee.invoices.util.invoices
 import nz.jeremylee.invoices.util.invoicesUi
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -82,9 +82,15 @@ class InvoiceListViewModelTest {
     @Test
     fun `when retry success with non-empty list, should show loaded state`() = runTest {
         // Given
-        coEvery { getInvoicesUseCase() } returns Result.success(invoices())
+        coEvery { getInvoicesUseCase() } returnsMany listOf(
+            Result.failure(Exception()),
+            Result.success(invoices())
+        )
 
         viewModel.uiState.test {
+            assertEquals(InvoiceListUiState.Loading, awaitItem())
+            assertEquals(InvoiceListUiState.Error, awaitItem())
+
             // When
             viewModel.onRetryClick()
 
@@ -99,9 +105,15 @@ class InvoiceListViewModelTest {
     @Test
     fun `when retry success with empty list, should show empty state`() = runTest {
         // Given
-        coEvery { getInvoicesUseCase() } returns Result.success(emptyList())
+        coEvery { getInvoicesUseCase() } returnsMany listOf(
+            Result.failure(Exception()),
+            Result.success(emptyList())
+        )
 
         viewModel.uiState.test {
+            assertEquals(InvoiceListUiState.Loading, awaitItem())
+            assertEquals(InvoiceListUiState.Error, awaitItem())
+
             // When
             viewModel.onRetryClick()
 
@@ -119,6 +131,9 @@ class InvoiceListViewModelTest {
         coEvery { getInvoicesUseCase() } returns Result.failure(Exception())
 
         viewModel.uiState.test {
+            assertEquals(InvoiceListUiState.Loading, awaitItem())
+            assertEquals(InvoiceListUiState.Error, awaitItem())
+
             // When
             viewModel.onRetryClick()
 
