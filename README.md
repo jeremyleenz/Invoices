@@ -1,7 +1,5 @@
 # Invoice App
-
-## Screenshots
-![Invoice list screen](screenshots/invoice_list.png)
+<img src="screenshots/invoice_list.png" alt="Invoice list screen" width="300"/>
 
 ## Architectural approach
 - **MVVM architecture** with a clear separation of concerns
