@@ -55,15 +55,17 @@ fun InvoiceListScreen(
         val modifier = Modifier.padding(innerPadding)
         when (uiState) {
             InvoiceListUiState.Loading -> LoadingContent(modifier)
-            is InvoiceListUiState.Loaded -> LoadedContent(
-                uiState = uiState as InvoiceListUiState.Loaded,
-                modifier = modifier,
-            )
             InvoiceListUiState.Empty -> EmptyContent(modifier)
-            InvoiceListUiState.Error -> ErrorContent(
-                modifier = modifier,
-                onRetryClick = viewModel::loadInvoices,
-            )
+            is InvoiceListUiState.Loaded ->
+                LoadedContent(
+                    uiState = uiState as InvoiceListUiState.Loaded,
+                    modifier = modifier,
+                )
+            InvoiceListUiState.Error ->
+                ErrorContent(
+                    modifier = modifier,
+                    onRetryClick = viewModel::loadInvoices,
+                )
         }
     }
 }
