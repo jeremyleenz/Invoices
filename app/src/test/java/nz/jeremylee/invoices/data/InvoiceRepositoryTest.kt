@@ -5,7 +5,6 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
 import io.mockk.unmockkAll
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runTest
 import nz.jeremylee.invoices.data.model.InvoiceDto
 import nz.jeremylee.invoices.data.model.InvoiceLineItemDto
@@ -13,6 +12,7 @@ import nz.jeremylee.invoices.data.model.InvoiceResponseDto
 import nz.jeremylee.invoices.util.invoiceDtos
 import nz.jeremylee.invoices.util.invoices
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test

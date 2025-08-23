@@ -31,7 +31,11 @@ class InvoiceListViewModel @Inject constructor(
         loadInvoices()
     }
 
-    fun loadInvoices() {
+    fun onRetryClick() {
+        loadInvoices()
+    }
+
+    private fun loadInvoices() {
         _uiState.update { InvoiceListUiState.Loading }
         viewModelScope.launch {
             getInvoicesUseCase()

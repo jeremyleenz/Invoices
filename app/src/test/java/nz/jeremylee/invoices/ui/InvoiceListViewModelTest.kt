@@ -32,20 +32,19 @@ class InvoiceListViewModelTest {
     }
 
     @Test
-    fun `when load invoices success with non-empty list, should show empty state`() = runTest {
+    fun `when load invoices success with non-empty list, should show loaded state`() = runTest {
         // Given
         coEvery { getInvoicesUseCase() } returns Result.success(invoices())
 
         viewModel.uiState.test {
-            // When
-            viewModel.loadInvoices()
+            // When init
 
             // Then
             assertEquals(InvoiceListUiState.Loading, awaitItem())
             assertEquals(InvoiceListUiState.Loaded(invoicesUi()), awaitItem())
             expectNoEvents()
         }
-        coVerify { getInvoicesUseCase() }
+        coVerify(exactly = 1) { getInvoicesUseCase() }
     }
 
     @Test
@@ -54,15 +53,14 @@ class InvoiceListViewModelTest {
         coEvery { getInvoicesUseCase() } returns Result.success(emptyList())
 
         viewModel.uiState.test {
-            // When
-            viewModel.loadInvoices()
+            // When init
 
             // Then
             assertEquals(InvoiceListUiState.Loading, awaitItem())
             assertEquals(InvoiceListUiState.Empty, awaitItem())
             expectNoEvents()
         }
-        coVerify { getInvoicesUseCase() }
+        coVerify(exactly = 1) { getInvoicesUseCase() }
     }
 
     @Test
@@ -71,14 +69,64 @@ class InvoiceListViewModelTest {
         coEvery { getInvoicesUseCase() } returns Result.failure(Exception())
 
         viewModel.uiState.test {
-            // When
-            viewModel.loadInvoices()
+            // When init
 
             // Then
             assertEquals(InvoiceListUiState.Loading, awaitItem())
             assertEquals(InvoiceListUiState.Error, awaitItem())
             expectNoEvents()
         }
-        coVerify { getInvoicesUseCase() }
+        coVerify(exactly = 1) { getInvoicesUseCase() }
+    }
+
+    @Test
+    fun `when retry success with non-empty list, should show loaded state`() = runTest {
+        // Given
+        coEvery { getInvoicesUseCase() } returns Result.success(invoices())
+
+        viewModel.uiState.test {
+            // When
+            viewModel.onRetryClick()
+
+            // Then
+            assertEquals(InvoiceListUiState.Loading, awaitItem())
+            assertEquals(InvoiceListUiState.Loaded(invoicesUi()), awaitItem())
+            expectNoEvents()
+        }
+        coVerify(exactly = 2) { getInvoicesUseCase() }
+    }
+
+    @Test
+    fun `when retry success with empty list, should show empty state`() = runTest {
+        // Given
+        coEvery { getInvoicesUseCase() } returns Result.success(emptyList())
+
+        viewModel.uiState.test {
+            // When
+            viewModel.onRetryClick()
+
+            // Then
+            assertEquals(InvoiceListUiState.Loading, awaitItem())
+            assertEquals(InvoiceListUiState.Empty, awaitItem())
+            expectNoEvents()
+        }
+        coVerify(exactly = 2) { getInvoicesUseCase() }
+    }
+
+    @Test
+    fun `when retry with error, should show error state`() = runTest {
+        // Given
+        coEvery { getInvoicesUseCase() } returns Result.failure(Exception())
+
+        viewModel.uiState.test {
+            // When
+            viewModel.onRetryClick()
+
+            // Then
+            assertEquals(InvoiceListUiState.Loading, awaitItem())
+            assertEquals(InvoiceListUiState.Error, awaitItem())
+            expectNoEvents()
+        }
+        coVerify(exactly = 2) { getInvoicesUseCase() }
     }
 }

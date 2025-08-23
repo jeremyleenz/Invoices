@@ -64,7 +64,7 @@ fun InvoiceListScreen(
             InvoiceListUiState.Error ->
                 ErrorContent(
                     modifier = modifier,
-                    onRetryClick = viewModel::loadInvoices,
+                    onRetryClick = viewModel::onRetryClick,
                 )
         }
     }
