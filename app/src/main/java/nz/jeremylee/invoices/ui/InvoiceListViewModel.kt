@@ -24,6 +24,13 @@ class InvoiceListViewModel @Inject constructor(
     private val getInvoicesUseCase: GetInvoicesUseCase,
 ) : ViewModel() {
 
+    private val numberFormat by lazy {
+        NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-AU"))
+    }
+    private val dateFormatter by lazy {
+        DateTimeFormatter.ofPattern(DATE_FORMAT)
+    }
+
     private val _uiState = MutableStateFlow<InvoiceListUiState>(InvoiceListUiState.Loading)
     val uiState: StateFlow<InvoiceListUiState> = _uiState.asStateFlow()
 
@@ -77,13 +84,9 @@ class InvoiceListViewModel @Inject constructor(
             price = priceInCents.centsToDisplayDollars(),
         )
 
-    private fun Int.centsToDisplayDollars(): String =
-        NumberFormat
-            .getCurrencyInstance(Locale.forLanguageTag("en-AU"))
-            .format(this / 100.0)
+    private fun Int.centsToDisplayDollars(): String = numberFormat.format(this / 100.0)
 
-    private fun LocalDateTime.toDisplayString(): String =
-        this.format(DateTimeFormatter.ofPattern(DATE_FORMAT))
+    private fun LocalDateTime.toDisplayString(): String = format(dateFormatter)
 
     companion object {
         private const val DATE_FORMAT = "d MMM yyyy"
