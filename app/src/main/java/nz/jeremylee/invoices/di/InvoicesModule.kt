@@ -24,12 +24,21 @@ object InvoicesModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
+    fun provideRetrofit(json: Json): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://storage.googleapis.com/xmm-homework/")
             .addConverterFactory(
-                Json.asConverterFactory("application/json".toMediaType())
+                json.asConverterFactory("application/json".toMediaType())
             )
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            isLenient = true
+            ignoreUnknownKeys = true
+        }
     }
 }
