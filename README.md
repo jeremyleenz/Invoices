@@ -14,7 +14,7 @@
   - Kotlinx Serialization - JSON parsing
   - Hilt - dependency injection
   - Jetpack Compose - UI framework
-  - JUnit 4 / kotlinx-coroutines-test / MockK, Turbine - testing
+  - JUnit 4, kotlinx-coroutines-test, MockK, Turbine - testing
   - Timber - logging
 
 ## Running the project
@@ -29,7 +29,7 @@
   - No UI/snapshot tests
   - Mock services used. In a production app I would also add `MockWebServer` integration tests with JSON responses.
 - **Domain layer**: Added to demonstrate layer separation. In a production app, I would keep it if the business logic grows, or consider omitting it if it stays thin.
-- **Code quality**: No linter or CI
+- **Code quality**: No linter or CI/CD
 - **Error handling**: All errors treated the same for simplicity (empty, network, parsing)
 - **Currency**: Assumed all values are AUD
 - **Mapping**: Extension functions in the ViewModel/Repository to streamline the logic
@@ -40,7 +40,7 @@
 - Add a details screen to display invoice line items more fully
 - Add sorting and filtering of invoices
 - Add UI and snapshot tests
-- Add integration tests using MockWebServer
+- Add integration tests using `MockWebServer`
 - Add CI/CD pipeline with linting and automated tests
 - Improve error handling by distinguishing between empty, network and parsing errors for a better user experience
 - Support multiple currencies
