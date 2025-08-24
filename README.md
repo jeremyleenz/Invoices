@@ -25,16 +25,16 @@
 ## Trade-offs
 - **UI**: One list screen only (no details screen, no sorting). I chose to display individual line items on the list screen for this task, but in a production app they would likely be better placed in a details screen.
 - **Tests**:
-  - Only unit tests (JUnit 4 for setup simplicity)
+  - Only unit tests (JUnit 4 for easier setup)
   - No UI/snapshot tests
-  - Mock services used, in a production app I would also add `MockWebServer` integration tests with JSON responses
-- **Domain layer**: Added to demonstrate layering and separation of concerns. In a production app, I would keep it if business logic grows, or consider omitting it if it stays thin.
+  - Mock services used. In a production app I would also add `MockWebServer` integration tests with JSON responses.
+- **Domain layer**: Added to demonstrate layer separation. In a production app, I would keep it if the business logic grows, or consider omitting it if it stays thin.
 - **Code quality**: No linter or CI
-- **Error handling**: All errors treated the same (empty, network, parsing)
+- **Error handling**: All errors treated the same for simplicity (empty, network, parsing)
 - **Currency**: Assumed all values are AUD
-- **Mapping**: Functions are in the ViewModel/Repository for simplicity
-- **Repository**: No interface in this project. In a production app, I would expose one for fakes in tests (e.g., `InvoiceRepository`, `InvoiceRepositoryImpl`, `FakeInvoiceRepository`)
-- **Pagination**: Not implemented. The endpoint is static and small, so I kept a single fetch for simplicity.
+- **Mapping**: Extension functions in the ViewModel/Repository to streamline the logic
+- **Repository**: No interface in this project. In a production app, I would expose one for faking in tests (e.g. `InvoiceRepository`, `InvoiceRepositoryImpl`, `FakeInvoiceRepository`)
+- **Pagination**: Not implemented. The endpoint is static and small, so I kept it as a single fetch for simplicity.
 
 ## Future improvements
 - Add a details screen to display invoice line items more fully
@@ -42,7 +42,7 @@
 - Add UI and snapshot tests
 - Add integration tests using MockWebServer
 - Add CI/CD pipeline with linting and automated tests
-- Improve error handling by distinguishing between empty, network and parsing errors
+- Improve error handling by distinguishing between empty, network and parsing errors for a better user experience
 - Support multiple currencies
 - Introduce repository interfaces for easier faking in tests
 - Extract mapper classes from ViewModel/Repository for clearer separation and better testability
